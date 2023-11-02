@@ -1,47 +1,43 @@
-const { Schema, model } = require("mongoose")
+const { User, Thought } = require("../models")
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    // Regex to match email address format
-    match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/, "Valid email required"],
-  },
-  // Array of _id values referencing the Thought model
-  thoughts: [
-    {
-        type: Schema.ObjectId,
-        ref: "Thought"
-    }
-  ],
-  // Array of _id values referencing the User model 
-  friends: [
-    {
-        type: Schema.ObjectId,
-        ref: "User"
-    }
-  ]
+const getUsers = () => {
+  return User.find()
 }
-{
-    toJSON: {
-        virtuals: true,
-    },
-    virtuals: {
-        friendCount: {
-            get() {
-                return this.friends.length
-            }
-        }
-    }
-});
 
-const User = model("User", userSchema)
+const getUserById = (id) => {
+  return User.findOne({_id: id})
+}
 
-module.exports = User;
+const createUser = (userData) => {
+  return User.create(userData)
+}
+
+const updateUserById = (id, userData) => {
+  return User.findByIdAndUpdate({_id: id}, userData, { new: true })
+}
+
+const deleteUserById = async (id) => {
+  const user = await getUserById(id)
+  const thoughtIds = user.thoughts
+  await Thought.deleteMany({_id: { $in: thoughtIds }})
+  return User.findByIdAndDelete({ _id: id})
+}
+
+const addFriend = (id, friendId) => {
+  return User.findOneAndUpdate({ _id: id }, { $addToSet: { friends: friendId } }, { new: true });
+}
+
+const removeFriend = (id, friendId ) => {
+  return User.findOneAndUpdate({ _id: id }, { $pull: { friends: friendId } }, { new: true });
+}
+
+module.exports = {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUserById,
+  deleteUserById,
+  addFriend,
+  removeFriend
+
+}
