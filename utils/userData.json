@@ -1,0 +1,14 @@
+[
+  {
+    "username": "Dude",
+    "email": "guy@email.com",
+    "thoughts": [],
+    "friends": []
+  },
+  {
+    "username": "Lady",
+    "email": "girl@email.com",
+    "thoughts": [],
+    "friends": []
+  }
+]
