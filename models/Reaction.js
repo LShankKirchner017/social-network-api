@@ -1,6 +1,6 @@
-const { Schmea } = require('mongoose')
+const { Schema } = require('mongoose')
 
-const reactionSchmea = new Schema({
+const reactionSchema = new Schema({
     reactionId: {
         type: Schema.ObjectId,
         default: () => new Schema.ObjectId()
